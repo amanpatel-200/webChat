@@ -20,6 +20,14 @@ const UserSchema = new mongoose.Schema({
     type: String,
  
   },
+   bio:{
+        type:String,
+        default:"Hey! I'm using SafeTalk."
+    },
+    profilePic:{
+        type:String,
+        default:""
+    }
 },{timestamps:true})
 const User = mongoose.model('User',UserSchema);
 export default User;

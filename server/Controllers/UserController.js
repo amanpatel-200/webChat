@@ -2,15 +2,42 @@ import express from "express";
 import User from "../Models/user.model.js";
 import bcrypt from "bcryptjs"
 import genToken from "../utils/genToken.js";
+import streamifier from "streamifier";
+import cloudinary from "../utils/cloudinary.js";
 export const Signup = async(req,res)=>{
  try{ 
-  let{name,email,password} = req.body;
+  let{name,email,password,bio} = req.body;
   const user = await User.findOne({email});
    if(user){
     return res.status(400).json({message:"Email Already exists"});
   }
   const hashPassword = await bcrypt.hash(password,10);
-  const newUser = await User.create({name,email,password:hashPassword}); 
+   let imageUrl = "";
+  
+  if (req.file) {
+    const uploadToCloudinary = () => {
+      return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder: "chat-images",
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+  
+        streamifier
+          .createReadStream(req.file.buffer)
+          .pipe(stream);
+      });
+    };
+  
+    const result = await uploadToCloudinary();
+  
+    imageUrl = result.secure_url;
+  }
+  const newUser = await User.create({name,email,password:hashPassword,bio,profilePic:imageUrl}); 
   const token = await genToken(newUser._id);
   res.cookie("token",token,{
         httpOnly:true,
@@ -18,7 +45,8 @@ export const Signup = async(req,res)=>{
         sameSite: "lax",
         maxAge: 7*24*60*60*1000
        })
-       return res.status(201).json({user:{_id:newUser._id,name:newUser.name,email:newUser.email}, message : "Signup Successfully",success:true});
+       return res.status(201).json({user:{_id:newUser._id,name:newUser.name, bio: newUser.bio,
+    profilePic: newUser.profilePic,}, message : "Signup Successfully",success:true});
 } catch(error){
  return res.status(500).json({message:`signup error ${error}`})
 }
