@@ -3,8 +3,8 @@ import { decryptMessage } from "../../utils/crypto";
 
 const Message = ({ message }) => {
   const authuser = JSON.parse(localStorage.getItem("messenger")) || {};
-
-  const itsme = message.senderId === authuser.id;
+ 
+  const itsme = message.senderId ===  authuser._id;
 
   const chatName = itsme ? "chat-end" : "chat-start";
   const chatColor = itsme ? "bg-blue-400" : "bg-green-400";
@@ -38,9 +38,9 @@ const Message = ({ message }) => {
 
         </div>
 
-        <div className="text-xs mt-1">
-          {formatTime}
-        </div>
+       <div className="chat-footer opacity-70 text-xs mt-1">
+    {formatTime}
+  </div>
       </div>
     </div>
   );

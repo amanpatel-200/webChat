@@ -1,5 +1,4 @@
 import React from "react";
-import linkedin from "../assets/linkedin.png"
 import useConversation from "../stateManage/useConversation";
 import { useContext } from "react";
 import { socketContext } from "../Context/SocketContext";
@@ -15,13 +14,13 @@ const User = ({user}) => {
     <div className="text-white flex space-x-4 px-4 py-3 my-1">
       <div className={`avatar ${isOnline?"avatar-online":" "}` }>
         <div className="w-14 rounded-full">
-          <img src={linkedin} />
+          <img src={user.profilePic} />
         </div>
       </div>
 
       <div className="text-white">
         <h1 className="font-bold">{user.name}</h1>
-        <span>{user.email}</span>
+        <span>{user.bio}</span>
       </div>
     </div>
     </div>

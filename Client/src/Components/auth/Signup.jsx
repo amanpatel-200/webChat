@@ -1,44 +1,55 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import axios from "axios"
+import axios from "axios";
 import { useContext } from "react";
 import { authDataContext } from "../Context/AuthContext";
 import { userDataContext } from "../Context/UserContext";
 import toast from "react-hot-toast";
-
+import { useState } from "react";
+import user from "../assets/user.png"
 const Signup = () => {
-  const {serverUrl } = useContext(authDataContext)
-  const {setUserdata} = useContext(userDataContext);
-  const navigate = useNavigate()
+  const { serverUrl } = useContext(authDataContext);
+  const { setUserdata } = useContext(userDataContext);
+  const [image, setImage] = useState(null);
+  const [loading,setLoading] = useState(false);
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm();
-  const onSubmit = async(data) =>{
-    const userInfo = {
-      name:data.name,
-      email:data.email,
-      password:data.password,
-      
+  const onSubmit = async (data) => {
+    const formData = new FormData();
+
+formData.append("name",data.name);
+formData.append("email",data.email);
+formData.append("password",data.password);
+formData.append("bio",data.bio);
+
+    if(image){
+    formData.append("profilePic",image);
     }
     try {
-      let res = await axios.post(`${serverUrl}/api/user/signup`,userInfo , {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        },);
-        toast.success(res.data.message)
-        setUserdata(res.data.user);
-        
-       localStorage.setItem("messenger", JSON.stringify(res.data.user));
-       navigate("/")
+      setLoading(true);
+      let res = await axios.post(`${serverUrl}/api/user/signup`, formData, {
+        headers: {  "Content-Type":"multipart/form-data" },
+        withCredentials: true,
+      });
+      toast.success(res.data.message);
+      setUserdata(res.data.user);
+
+      localStorage.setItem("messenger", JSON.stringify(res.data.user));
+      navigate("/");
+      setLoading(false);
     } catch (error) {
-     toast.error(error.response?.data);
-      console.log(error)
+
+       toast.error(error.response?.data?.message || "Something went wrong");
+       console.log(error.response?.data);
+       setLoading(false);
     }
-  }
+  };
   const password = watch("password");
   const validatePasswordMatch = (value) => {
     return value === password || "Password and Confirm Password don't match";
@@ -134,10 +145,50 @@ const Signup = () => {
               </span>
             )}
           </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-gray-300">Bio</label>
 
-          <button className="h-11 rounded-lg bg-green-600 hover:bg-green-700 transition cursor-pointer text-white font-semibold">
-            Sign Up
-          </button>
+            <textarea
+              rows={3}
+              placeholder="Tell us about yourself"
+              {...register("bio")}
+              className="bg-slate-800 border border-slate-700 rounded-lg p-3 text-white"
+            />
+          </div>
+          <div className="flex flex-col items-center gap-3">
+            {/* Image Preview */}
+            <img
+              src={
+                image
+                  ? URL.createObjectURL(image)
+                  : user
+              }
+              alt="Profile"
+              className="w-28 h-28 rounded-full object-cover border-2 border-slate-600"
+            />
+
+            {/* Hidden Input */}
+            <input
+              type="file"
+              accept="image/*"
+              id="profilePic"
+              className="hidden"
+              onChange={(e) => setImage(e.target.files[0])}
+            />
+
+            {/* Upload Button */}
+            <label
+              htmlFor="profilePic"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg cursor-pointer transition"
+            >
+              Upload Profile Image
+            </label>
+          </div>
+
+          {loading?(<span className="loading loading-spinner loading-xl text-center bg-green-600"></span>):(<button className="h-11 rounded-lg bg-green-600 hover:bg-green-700 transition cursor-pointer text-white font-semibold disabled={loading}">
+              Sign Up
+             </button>)
+           }
 
           <span className="text-sm text-center text-gray-400">
             Already have an account?{" "}
