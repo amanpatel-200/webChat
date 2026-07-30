@@ -1,4 +1,4 @@
-# 💬 WebChat
+# 💬 SafeTalk(WebChat Application)
 
 A modern real-time chat application built with the MERN Stack that enables users to communicate instantly through a secure and responsive interface.
 
