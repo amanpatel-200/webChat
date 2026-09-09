@@ -1,10 +1,13 @@
+
 import React from "react";
 import { decryptMessage } from "../../utils/crypto";
 
 const Message = ({ message }) => {
   const authuser = JSON.parse(localStorage.getItem("messenger")) || {};
- 
-  const itsme = message.senderId ===  authuser._id;
+
+  // Compare sender ID with logged-in user's ID
+  const itsme =
+    message.senderId?.toString() === authuser.id?.toString();
 
   const chatName = itsme ? "chat-end" : "chat-start";
   const chatColor = itsme ? "bg-blue-400" : "bg-green-400";
@@ -16,34 +19,32 @@ const Message = ({ message }) => {
     minute: "2-digit",
   });
 
+  const hasImage = message.image && message.image.trim() !== "";
+
   return (
     <div className="pt-4">
       <div className={`chat ${chatName}`}>
-        <div className={`chat-bubble text-white ${chatColor}`}>
 
-          {/* Text Message */}
-          {message.message && (
+        {hasImage ? (
+          <img
+            src={message.image}
+            alt="shared"
+            className="max-w-[250px] max-h-[300px] rounded-lg object-cover cursor-pointer"
+            onClick={() => window.open(message.image, "_blank")}
+          />
+        ) : (
+          <div className={`chat-bubble text-white ${chatColor}`}>
             <p>{decryptMessage(message.message)}</p>
-          )}
+          </div>
+        )}
 
-          {/* Image Message */}
-          {message.image && (
-            <img
-              src={message.image}
-              alt="shared"
-              className="max-w-62.5 max-h-75 rounded-lg mt-2 object-cover cursor-pointer "
-              onClick={() => window.open(message.image, "_blank")}
-            />
-          )}
-
+        <div className="chat-footer opacity-70 text-xs mt-1">
+          {formatTime}
         </div>
-
-       <div className="chat-footer opacity-70 text-xs mt-1">
-    {formatTime}
-  </div>
       </div>
     </div>
   );
 };
 
 export default Message;
+

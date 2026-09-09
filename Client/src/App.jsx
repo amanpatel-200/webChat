@@ -7,6 +7,7 @@ import Signup from "../src/Components/auth/Signup"
 import  { Toaster } from 'react-hot-toast';
 import ProtectedRoute from "./Components/Pages/ProtectedRoute";
 import Mainpage from "./Components/Pages/Mainpage";
+import CreateGeoupchat from "./Components/Home/CreateGeoupchat";
 const App = () => {
   
   const appRouter = createBrowserRouter([
@@ -21,6 +22,10 @@ const App = () => {
     {
       path:"/profile",
       element:<ProfilePage/>
+    },
+    {
+      path:"/createGroup",
+      element:<CreateGeoupchat/>
     },
     {
       path:"/login",

@@ -8,6 +8,7 @@ import Messages from "./Messages";
 import Typing from "./Typing";
 import useConversation from "../stateManage/useConversation";
 import NochatUse from "./NochatUse";
+import GroupChat from "./GroupChat";
 
 const HomePage = () => {
   const { selectedConversation, setSelectedConversation } = useConversation();
@@ -63,9 +64,11 @@ const HomePage = () => {
         <div className="bg-black text-white w-82 h-full flex">
 
           {/* logout column */}
-          <div className="w-14 border-r border-gray-800 flex flex-col justify-end items-center py-4">
+          <div className="w-14 border-r border-gray-800 flex flex-col justify-between items-center py-4">  
+            <GroupChat/>
             <Logout />
           </div>
+         
 
           {/* users column */}
           <div className="flex-1 flex flex-col h-full">

@@ -1,13 +1,13 @@
 import React, {  useState } from "react";
 import { IoMdSearch } from "react-icons/io";
-
+import toast from "react-hot-toast";
 import useConversation from "../stateManage/useConversation";
 import GetAllUser from "../Context/GetAllUser";
 
 const Search = () => {
   const [search, setSearch] = useState("");
   const  [allUser] = GetAllUser();
-  const { setSelectedConversation } = useConversation(); // ✅ camelCase
+  const { setSelectedConversation } = useConversation(); 
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -19,12 +19,13 @@ const Search = () => {
 
     if (conversation) {
       setSelectedConversation(conversation);
-      setSearch(""); // ✅ reset input properly
+      setSearch(""); 
     } else {
-      alert("User not found");
+      toast.error( "User are not found");
+      setSearch("");
     }
   };
-
+    
   return (
     <div className="w-full px-3 sm:px-4 md:px-6 py-1 border-b border-slate-600">
       <form className="w-full" onSubmit={handleSubmit}>
@@ -34,7 +35,7 @@ const Search = () => {
               type="search"
               required
               placeholder="Search..."
-              value={search}                         // ⭐ FIXED
+              value={search}                        
               onChange={(e) => setSearch(e.target.value)}
               className="bg-transparent outline-none text-white w-full text-sm sm:text-base"
             />
